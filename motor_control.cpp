@@ -1,13 +1,25 @@
 #include "motor_control.h"
 #include "pico/stdlib.h"
+#include "hardware/pwm.h"
 
-motor::motor(u_int8_t pin_1, u_int8_t pin_2, u_int8_t pin_3, u_int8_t pin_4)
+
+motor::motor(uint8_t d_pins[])
 {
-    uint8_t pins[4] = {IN1 = pin_1, IN2 = pin_2, IN3 = pin_3, IN4 = pin_4};
+    for (size_t i = 0; i <= EN; i++)
+        PINS[i] = d_pins[i];
 
-    for (int i = 0; i <= 4; i++)
+    for (size_t j = 0; j <= EN; j++)
     {
-        gpio_init(pins[i]);
-        gpio_set_dir(pins[i], GPIO_OUT);
+        gpio_init(PINS[j]);
+        gpio_set_dir(PINS[j], GPIO_OUT);
     }
+
+
+
+}
+
+void motor::stop()
+{
+    for (size_t i = 0; i <= EN; i++)
+        gpio_put(PINS[i], false);
 }

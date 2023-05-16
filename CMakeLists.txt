@@ -20,7 +20,7 @@ target_sources(main PRIVATE
 )
 
 # Add pico_stdlib library which aggregates commonly used features
-target_link_libraries(main pico_stdlib)
+target_link_libraries(main pico_stdlib hardware_pwm)
 
 # Add hardware pwm library
 target_link_libraries(main hardware_gpio hardware_dma hardware_timer)
