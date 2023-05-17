@@ -1,4 +1,4 @@
-### GUIDE USED PI-PICO, MAC OS
+### GUIDE USED PI-PICO
 
 #### INSTALLATION DEPENDENCIES DEV PI-PICO
 1. [Install brew](https://brew.sh/)
