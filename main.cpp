@@ -3,7 +3,6 @@
 #include "pico/bootrom.h"
 #include <math.h>
 #include <string>
-#include "motor_control.h"
 #include "pico/multicore.h"
 
 void reload_program();
@@ -29,12 +28,15 @@ int main()
 {
     stdio_init_all();
 
+    /* two core */
+    multicore_launch_core1(reload_program);
+
     gpio_init(RELOAD_PIN);
     gpio_set_dir(RELOAD_PIN, GPIO_IN);
     gpio_pull_up(RELOAD_PIN);
 
     /* HC-SR04 */
-    // init_hc_sr04();
+    init_hc_sr04();
 
     /* HM-sensors */
     gpio_init(LET_HM);
@@ -43,16 +45,26 @@ int main()
     gpio_set_dir(RIGHT_HM, GPIO_IN);
 
     /* test */
-    gpio_init(PICO_DEFAULT_LED_PIN);
-    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
+    gpio_init(22);
+    gpio_set_dir(22, GPIO_OUT);
 
     while (true)
     {
-        reload_program();
-
         bool let = gpio_get(LET_HM);
         // string str_let = to_string(let);
         // printf("%s", str_let.c_str());
+
+        if (!let)
+            gpio_put(22, true);
+        else
+            gpio_put(22, false);
+        
+        float current_distance = measure_distance();
+        printf("Distance: %.2f cm\n", current_distance);
+
+
+        sleep_ms(1000);
+
     }
 
     return 0;
@@ -105,8 +117,12 @@ void reload_program()
         the state of a specific pin (RELOAD_PIN) and initiate
         a USB boot mode if a certain condition is met.
     */
-    bool reload_pin_current = !gpio_get(RELOAD_PIN);
-    if (reload_pin_current && !reload_pin_previous)
-        reset_usb_boot(0, 0);
-    reload_pin_previous = reload_pin_current;
+    while (true)
+    {
+        bool reload_pin_current = !gpio_get(RELOAD_PIN);
+        if (reload_pin_current && !reload_pin_previous)
+            reset_usb_boot(0, 0);
+        reload_pin_previous = reload_pin_current;
+    }
+    multicore_reset_core1();
 }
