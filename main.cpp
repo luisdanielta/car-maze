@@ -2,6 +2,9 @@
 #include "pico/stdlib.h"
 #include "pico/bootrom.h"
 #include <math.h>
+#include <string>
+#include "motor_control.h"
+#include "pico/multicore.h"
 
 void reload_program();
 bool reload_pin_previous = true;
@@ -14,6 +17,14 @@ void init_hc_sr04();
 float measure_distance();
 float calculate_speed(float, float, uint32_t);
 
+/* HM-sensors */
+const uint8_t LET_HM = 9;
+const uint8_t RIGHT_HM = 21;
+
+/* motors */
+
+using namespace std;
+
 int main()
 {
     stdio_init_all();
@@ -23,26 +34,25 @@ int main()
     gpio_pull_up(RELOAD_PIN);
 
     /* HC-SR04 */
-    init_hc_sr04();
+    // init_hc_sr04();
 
-    float previous_distance = 0.0;
-    uint32_t previous_time = time_us_32();
+    /* HM-sensors */
+    gpio_init(LET_HM);
+    gpio_set_dir(LET_HM, GPIO_IN);
+    gpio_init(RIGHT_HM);
+    gpio_set_dir(RIGHT_HM, GPIO_IN);
+
+    /* test */
+    gpio_init(PICO_DEFAULT_LED_PIN);
+    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
 
     while (true)
     {
         reload_program();
 
-        float current_distance = measure_distance();
-        uint32_t current_time = time_us_32();
-
-        float speed = calculate_speed(previous_distance, current_distance, current_time - previous_time);
-        printf("Speed: %.2f cm/s\n", abs(speed));
-        printf("Distance: %.2f cm\n", current_distance);
-
-        previous_distance = current_distance;
-        previous_time = current_time;
-
-        sleep_ms(300);
+        bool let = gpio_get(LET_HM);
+        // string str_let = to_string(let);
+        // printf("%s", str_let.c_str());
     }
 
     return 0;

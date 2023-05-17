@@ -17,13 +17,16 @@ add_executable(main
 target_sources(main PRIVATE
     motor_control.cpp
     motor_control.h
+
+    motor.cpp
+    motor.h
 )
 
 # Add pico_stdlib library which aggregates commonly used features
-target_link_libraries(main pico_stdlib hardware_pwm)
+target_link_libraries(main pico_stdlib pico_multicore)
 
 # Add hardware pwm library
-target_link_libraries(main hardware_gpio hardware_dma hardware_timer)
+target_link_libraries(main hardware_gpio hardware_dma hardware_timer hardware_pwm)
 
 # config uart output USB
 pico_enable_stdio_usb(main 1)

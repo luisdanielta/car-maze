@@ -2,8 +2,9 @@
 #define MOTOR_CONTROL_H
 
 #include <stdio.h>
+#include "motor.h"
 
-class motor
+class control: public motor
 {
 private:
     uint8_t EN; // enable number of pins, default 4
@@ -16,7 +17,7 @@ private:
     uint8_t LOW[5] = {204, 153, 102, 51, 0};
 
 public:
-    motor(uint8_t *);
+    control(uint8_t *);
     void stop();
 };
 
