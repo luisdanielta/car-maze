@@ -1,115 +1,62 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
+#include "hardware/gpio.h"
 #include "pico/bootrom.h"
-#include <math.h>
-#include <string>
-#include "pico/multicore.h"
+#include "motor.h"
+#include "control_motor.h"
 
 void reload_program();
 bool reload_pin_previous = true;
 #define RELOAD_PIN 16
 
-/* HC-SR04 */
-const uint8_t TRIG_PIN = 27;
-const uint8_t ECHO_PIN = 26;
-void init_hc_sr04();
-float measure_distance();
-float calculate_speed(float, float, uint32_t);
+uint8_t motor_l_p[2] = {14, 13};
+motor motor_left(motor_l_p);
+
+uint8_t motor_r_p[2] = {11, 12};
+motor motor_right(motor_r_p);
+
+uint8_t en[2] = {15, 10};
+control_motor motors(motor_left, motor_right, en);
 
 /* HM-sensors */
 const uint8_t LET_HM = 9;
-const uint8_t RIGHT_HM = 21;
-
-/* motors */
-
-using namespace std;
 
 int main()
 {
     stdio_init_all();
 
-    /* two core */
-    multicore_launch_core1(reload_program);
-
     gpio_init(RELOAD_PIN);
     gpio_set_dir(RELOAD_PIN, GPIO_IN);
     gpio_pull_up(RELOAD_PIN);
 
-    /* HC-SR04 */
-    init_hc_sr04();
+    gpio_init(20);
+    gpio_set_dir(20, GPIO_IN);
+    gpio_pull_up(20);
 
-    /* HM-sensors */
     gpio_init(LET_HM);
     gpio_set_dir(LET_HM, GPIO_IN);
-    gpio_init(RIGHT_HM);
-    gpio_set_dir(RIGHT_HM, GPIO_IN);
 
-    /* test */
-    gpio_init(22);
-    gpio_set_dir(22, GPIO_OUT);
 
     while (true)
     {
+        reload_program();
+
         bool let = gpio_get(LET_HM);
-        // string str_let = to_string(let);
-        // printf("%s", str_let.c_str());
 
-        if (!let)
-            gpio_put(22, true);
+        if (let)
+            motors.forward();
         else
-            gpio_put(22, false);
-        
-        float current_distance = measure_distance();
-        printf("Distance: %.2f cm\n", current_distance);
+            motors.stop();
 
-
-        sleep_ms(1000);
-
+        /*
+         stop control with button 20 is pressed and change state
+         with again pressed button 20
+        */
     }
 
     return 0;
 }
 
-/* func hc-sr04 */
-void init_hc_sr04()
-{
-    gpio_init(TRIG_PIN);
-    gpio_set_dir(TRIG_PIN, GPIO_OUT);
-    gpio_put(TRIG_PIN, 0);
-
-    gpio_init(ECHO_PIN);
-    gpio_set_dir(ECHO_PIN, GPIO_IN);
-    gpio_set_pulls(ECHO_PIN, true, false);
-}
-
-float measure_distance()
-{
-    gpio_put(TRIG_PIN, 1);
-    sleep_us(10);
-    gpio_put(TRIG_PIN, 0);
-
-    while (!gpio_get(ECHO_PIN))
-        ;
-
-    uint32_t start_time = time_us_32();
-    while (gpio_get(ECHO_PIN))
-        ;
-    uint32_t end_time = time_us_32();
-
-    uint32_t pulse_duration = end_time - start_time;
-
-    float distance = pulse_duration * 0.0343 / 2.0;
-
-    return distance;
-}
-
-float calculate_speed(float d_uno, float d_two, uint32_t time_interval)
-{
-    float speed = (d_two - d_uno) / (time_interval / 1000000.0);
-    return speed;
-}
-
-/* func extras */
 void reload_program()
 {
     /*
@@ -117,12 +64,9 @@ void reload_program()
         the state of a specific pin (RELOAD_PIN) and initiate
         a USB boot mode if a certain condition is met.
     */
-    while (true)
-    {
-        bool reload_pin_current = !gpio_get(RELOAD_PIN);
-        if (reload_pin_current && !reload_pin_previous)
-            reset_usb_boot(0, 0);
-        reload_pin_previous = reload_pin_current;
-    }
-    multicore_reset_core1();
+
+    bool reload_pin_current = !gpio_get(RELOAD_PIN);
+    if (reload_pin_current && !reload_pin_previous)
+        reset_usb_boot(0, 0);
+    reload_pin_previous = reload_pin_current;
 }

@@ -14,13 +14,13 @@ add_executable(main
 )
 
 # add files motor_control.c and motor_control.h
-#target_sources(main PRIVATE
- #   motor_control.cpp
-  #  motor_control.h
+target_sources(main PRIVATE
+    control_motor.cpp
+    control_motor.h
 
-   # motor.cpp
-    #motor.h
-#)
+    motor.cpp
+    motor.h
+)
 
 # Add pico_stdlib library which aggregates commonly used features
 target_link_libraries(main pico_stdlib pico_multicore)
