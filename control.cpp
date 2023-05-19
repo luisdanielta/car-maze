@@ -1,7 +1,7 @@
-#include "control_motor.h"
+#include "control.h"
 #include "hardware/pwm.h"
 
-control_motor::control_motor(motor &motor_left, motor &motor_right, uint8_t *en)
+control::control(motor &motor_left, motor &motor_right, uint8_t *en)
     : motor_left(motor_left), motor_right(motor_right)
 {
     /* set config pin of en(set speed) PWM */
@@ -22,9 +22,9 @@ control_motor::control_motor(motor &motor_left, motor &motor_right, uint8_t *en)
     }
 }
 
-control_motor::~control_motor() {}
+control::~control() {}
 
-int control_motor::speed(uint8_t *speed)
+int control::speed(uint8_t *speed)
 {
     size_t i;
     for (i = 0; i < 5; i++)
@@ -36,7 +36,7 @@ int control_motor::speed(uint8_t *speed)
     return i;
 }
 
-void control_motor::forward()
+void control::forward()
 {
     gpio_put(motor_left.pins[0], 1);
     gpio_put(motor_left.pins[1], 0);
@@ -57,7 +57,7 @@ void control_motor::forward()
         pwm_set_gpio_level(this->en[0], 255); // set speed to max
 }
 
-void control_motor::stop()
+void control::stop()
 {
     if (STOP)
     {

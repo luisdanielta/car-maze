@@ -15,8 +15,9 @@ add_executable(main
 
 # add files motor_control.c and motor_control.h
 target_sources(main PRIVATE
-    control_motor.cpp
-    control_motor.h
+    
+    control.h
+    control.cpp
 
     motor.cpp
     motor.h

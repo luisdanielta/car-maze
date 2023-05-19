@@ -3,7 +3,7 @@
 
 #include "motor.h"
 
-class control_motor
+class control
 {
 private:
     motor &motor_left;
@@ -17,8 +17,8 @@ private:
     int speed(uint8_t *);
 
 public:
-    control_motor(motor &, motor &, uint8_t *);
-    ~control_motor();
+    control(motor &, motor &, uint8_t *);
+    ~control();
     
     /* movement */
     void forward();
