@@ -20,6 +20,9 @@ target_sources(main PRIVATE
 
     motor.cpp
     motor.h
+
+    core.cpp
+    core.h
 )
 
 # Add pico_stdlib library which aggregates commonly used features

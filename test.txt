@@ -3,13 +3,10 @@
 #include "pico/bootrom.h"
 #include <math.h>
 #include <string>
-#include "pico/multicore.h"
+
 #include "motor.h"
 #include "motor_control.h"
 
-void reload_program(); 
-bool reload_pin_previous = true;
-#define RELOAD_PIN 16
 
 /* HC-SR04 */
 const uint8_t TRIG_PIN = 27;
@@ -31,7 +28,7 @@ int main()
     stdio_init_all();
 
     /* two core */
-    multicore_launch_core1(reload_program);
+    
 
     gpio_init(RELOAD_PIN);
     gpio_set_dir(RELOAD_PIN, GPIO_IN);
@@ -112,19 +109,3 @@ float calculate_speed(float d_uno, float d_two, uint32_t time_interval)
 }
 
 /* func extras */
-void reload_program()
-{
-    /*
-        The reload_program function is designed to check
-        the state of a specific pin (RELOAD_PIN) and initiate
-        a USB boot mode if a certain condition is met.
-    */
-    while (true)
-    {
-        bool reload_pin_current = !gpio_get(RELOAD_PIN);
-        if (reload_pin_current && !reload_pin_previous)
-            reset_usb_boot(0, 0);
-        reload_pin_previous = reload_pin_current;
-    }
-    multicore_reset_core1();
-}
