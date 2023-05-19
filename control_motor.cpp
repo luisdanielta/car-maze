@@ -4,29 +4,21 @@
 control_motor::control_motor(motor &motor_left, motor &motor_right, uint8_t *en)
     : motor_left(motor_left), motor_right(motor_right)
 {
+    /* set config pin of en(set speed) PWM */
+
+    uint slice_num[2];
+    pwm_config config = pwm_get_default_config();
+
     for (size_t i = 0; i < 2; i++)
     {
         this->en[i] = en[i];
         gpio_init(this->en[i]);
         gpio_set_dir(this->en[i], GPIO_OUT);
-    }
-
-    /* set config pin of en(set speed) PWM */
-    uint slice_num[2];
-    for (size_t j = 0; j < 2; j++)
-    {
-
-        gpio_set_function(this->en[j], GPIO_FUNC_PWM);
-        slice_num[j] = pwm_gpio_to_slice_num(this->en[j]);
-    }
-
-    pwm_config config = pwm_get_default_config();
-
-    for (size_t k = 0; k < 2; k++)
-    {
-        pwm_init(slice_num[k], &config, true);
-        pwm_set_wrap(slice_num[k], 255);
-        pwm_set_gpio_level(this->en[k], 0);
+        gpio_set_function(this->en[i], GPIO_FUNC_PWM);
+        slice_num[i] = pwm_gpio_to_slice_num(this->en[i]);
+        pwm_init(slice_num[i], &config, true);
+        pwm_set_wrap(slice_num[i], 255);
+        pwm_set_gpio_level(this->en[i], 0);
     }
 }
 
@@ -55,10 +47,10 @@ void control_motor::forward()
     if (FORWARD) // check if the motor is already
     {
         int status = speed(HIGH);
-        if (status == 4)
+        if (status == 5)
         {
             FORWARD = false; // disable accelerate
-            STOP = true; // enable stop
+            STOP = true;     // enable stop
         }
     }
     else
@@ -70,10 +62,10 @@ void control_motor::stop()
     if (STOP)
     {
         int status = speed(LOW); // decelerate
-        if (status == 4)
+        if (status == 5)
         {
             FORWARD = true; // enable accelerate
-            STOP = false; // disable stop
+            STOP = false;   // disable stop
         }
     }
 }

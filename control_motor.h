@@ -8,6 +8,7 @@ class control_motor
 private:
     motor &motor_left;
     motor &motor_right;
+    
     uint8_t en[2];
     bool FORWARD = true;
     bool STOP = false;
@@ -18,9 +19,14 @@ private:
 public:
     control_motor(motor &, motor &, uint8_t *);
     ~control_motor();
+    
+    /* movement */
     void forward();
     void backward();
     void stop();
+
+    /* direction */
+    void set_turn_signals(uint8_t *);
     void left();
     void right();
 };
