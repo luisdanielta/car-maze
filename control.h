@@ -17,6 +17,8 @@ private:
     int speed(uint8_t *);
     
     uint8_t LIGHTS[2];
+    void left_turn_signals();
+    void right_turn_signals();
 
 public:
     control(motor &, motor &, uint8_t *);
@@ -27,10 +29,8 @@ public:
     void backward();
     void stop();
 
-    /* direction */
+    /* lights */
     void set_turn_signals(uint8_t *);
-    void left();
-    void right();
 };
 
 #endif // MOTOR_CONTROL_H

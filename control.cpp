@@ -36,15 +36,15 @@ int control::speed(uint8_t *speed)
     return i;
 }
 
-void control::set_turn_signals(uint8_t *ligths)
-{
-    for (size_t i = 0; i < 2; i++)
-    {
-        this->LIGHTS[i] = ligths[i];
-        gpio_init(this->LIGHTS[i]);
-        gpio_set_dir(this->LIGHTS[i], GPIO_OUT);
-    }
-}
+
+
+
+
+
+
+
+
+
 
 void control::forward()
 {
