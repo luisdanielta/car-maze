@@ -24,6 +24,9 @@ target_sources(main PRIVATE
 
     core.cpp
     core.h
+
+    led.h
+    led.cpp
 )
 
 # Add pico_stdlib library which aggregates commonly used features

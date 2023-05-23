@@ -5,7 +5,6 @@ control::control(motor &motor_left, motor &motor_right, uint8_t *en)
     : motor_left(motor_left), motor_right(motor_right)
 {
     /* set config pin of en(set speed) PWM */
-
     uint slice_num[2];
     pwm_config config = pwm_get_default_config();
 

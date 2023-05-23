@@ -41,7 +41,7 @@ int main()
     void init_sl_sensors();
 
     while (true)
-    {
+    {   /*
         bool sl_l_state = gpio_get(SL_LEFT);
         string str_let = to_string(sl_l_state);
         printf("%s", str_let.c_str());
@@ -50,6 +50,7 @@ int main()
             motors.forward();
         else
             motors.stop();
+        */
     }
     return 0;
 }
