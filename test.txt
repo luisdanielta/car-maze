@@ -25,14 +25,6 @@ using namespace std;
 
 int main()
 {
-    stdio_init_all();
-
-    /* two core */
-    
-
-    gpio_init(RELOAD_PIN);
-    gpio_set_dir(RELOAD_PIN, GPIO_IN);
-    gpio_pull_up(RELOAD_PIN);
 
     /* HC-SR04 */
     init_hc_sr04();
@@ -69,43 +61,6 @@ int main()
     return 0;
 }
 
-/* func hc-sr04 */
-void init_hc_sr04()
-{
-    gpio_init(TRIG_PIN);
-    gpio_set_dir(TRIG_PIN, GPIO_OUT);
-    gpio_put(TRIG_PIN, 0);
 
-    gpio_init(ECHO_PIN);
-    gpio_set_dir(ECHO_PIN, GPIO_IN);
-    gpio_set_pulls(ECHO_PIN, true, false);
-}
-
-float measure_distance()
-{
-    gpio_put(TRIG_PIN, 1);
-    sleep_us(10);
-    gpio_put(TRIG_PIN, 0);
-
-    while (!gpio_get(ECHO_PIN))
-        ;
-
-    uint32_t start_time = time_us_32();
-    while (gpio_get(ECHO_PIN))
-        ;
-    uint32_t end_time = time_us_32();
-
-    uint32_t pulse_duration = end_time - start_time;
-
-    float distance = pulse_duration * 0.0343 / 2.0;
-
-    return distance;
-}
-
-float calculate_speed(float d_uno, float d_two, uint32_t time_interval)
-{
-    float speed = (d_two - d_uno) / (time_interval / 1000000.0);
-    return speed;
-}
 
 /* func extras */

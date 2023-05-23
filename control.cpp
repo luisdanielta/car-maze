@@ -31,9 +31,19 @@ int control::speed(uint8_t *speed)
     {
         pwm_set_gpio_level(this->en[0], speed[i]);
         pwm_set_gpio_level(this->en[1], speed[i]);
-        sleep_ms(500);
+        sleep_ms(300);
     }
     return i;
+}
+
+void control::set_turn_signals(uint8_t *ligths)
+{
+    for (size_t i = 0; i < 2; i++)
+    {
+        this->LIGHTS[i] = ligths[i];
+        gpio_init(this->LIGHTS[i]);
+        gpio_set_dir(this->LIGHTS[i], GPIO_OUT);
+    }
 }
 
 void control::forward()
