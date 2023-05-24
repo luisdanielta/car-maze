@@ -30,20 +30,10 @@ int control::speed(uint8_t *speed)
     {
         pwm_set_gpio_level(this->en[0], speed[i]);
         pwm_set_gpio_level(this->en[1], speed[i]);
-        sleep_ms(300);
+        sleep_ms(50);
     }
     return i;
 }
-
-
-
-
-
-
-
-
-
-
 
 void control::forward()
 {
@@ -77,4 +67,46 @@ void control::stop()
             STOP = false;   // disable stop
         }
     }
+}
+
+void control::left()
+{
+    gpio_put(motor_left.pins[0], 0);
+    gpio_put(motor_left.pins[1], 1);
+
+    gpio_put(motor_right.pins[0], 1);
+    gpio_put(motor_right.pins[1], 0);
+
+    if (FORWARD) // check if the motor is already
+    {
+        int status = speed(HIGH);
+        if (status == 5)
+        {
+            FORWARD = false; // disable accelerate
+            STOP = true;     // enable stop
+        }
+    }
+    else
+        pwm_set_gpio_level(this->en[0], 255); // set speed to max
+}
+
+void control::right()
+{
+    gpio_put(motor_left.pins[0], 1);
+    gpio_put(motor_left.pins[1], 0);
+
+    gpio_put(motor_right.pins[0], 0);
+    gpio_put(motor_right.pins[1], 1);
+
+    if (FORWARD) // check if the motor is already
+    {
+        int status = speed(HIGH);
+        if (status == 5)
+        {
+            FORWARD = false; // disable accelerate
+            STOP = true;     // enable stop
+        }
+    }
+    else
+        pwm_set_gpio_level(this->en[0], 255); // set speed to max
 }

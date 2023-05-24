@@ -7,5 +7,4 @@
 void reload_program();
 void mode_usb_debug(bool);
 
-
 #endif

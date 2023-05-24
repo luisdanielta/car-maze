@@ -9,11 +9,6 @@ class control
 private:
     motor &motor_left;
     motor &motor_right;
-
-    /* lights */
-    void set_turn_signals(led &, led &);
-    led &turn_signal_left;
-    led &turn_signal_right;
     
     uint8_t en[2];
     bool FORWARD = true;
@@ -30,6 +25,9 @@ public:
     void forward();
     void backward();
     void stop();
+    void left();
+    void right();
+    
 };
 
 #endif // MOTOR_CONTROL_H

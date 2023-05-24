@@ -4,10 +4,11 @@
 #include "motor.h"
 #include "control.h"
 #include <string>
+#include "led.h"
 
 /* MOTORS */
 uint8_t pins_left[2] = {14, 13};
-uint8_t pins_right[2] = {12, 11};
+uint8_t pins_right[2] = {11, 12};
 
 motor motor_left(pins_left);
 motor motor_right(pins_right);
@@ -27,6 +28,9 @@ void init_hc_sr04();
 float measure_distance();
 float calculate_speed(float, float, uint32_t);
 
+/* SYSTEM */
+led system_led(25);
+
 using namespace std;
 
 int main()
@@ -40,8 +44,12 @@ int main()
     /* SENSORS OF LIGHT */
     void init_sl_sensors();
 
+    /* SYSTEM */
+    system_led.brightness = 50;
+    system_led.on();
+
     while (true)
-    {   /*
+    { 
         bool sl_l_state = gpio_get(SL_LEFT);
         string str_let = to_string(sl_l_state);
         printf("%s", str_let.c_str());
@@ -50,9 +58,9 @@ int main()
             motors.forward();
         else
             motors.stop();
-        */
     }
     return 0;
+
 }
 
 /* func sensors of light */
