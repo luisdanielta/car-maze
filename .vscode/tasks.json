@@ -4,7 +4,7 @@
       {
         "label": "loader",
         "type": "shell",
-        "command": "xcopy build\\main.uf2 D:\\ /y",
+        "command": "xcopy build\\main.uf2 E:\\ /y",
         "problemMatcher": []
       }
     ]

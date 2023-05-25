@@ -27,11 +27,6 @@ target_sources(main PRIVATE
 
     led.h
     led.cpp
-
-    font.h
-
-    ssd1306.c
-    ssd1306.h
 )
 
 # Add pico_stdlib library which aggregates commonly used features

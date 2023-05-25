@@ -6,8 +6,6 @@
 #include <string>
 #include "led.h"
 #include "hardware/i2c.h"
-#include "ssd1306.h"
-#include "font.h"
 
 /* MOTORS */
 uint8_t pins_left[2] = {14, 13};
@@ -33,10 +31,6 @@ float calculate_speed(float, float, uint32_t);
 
 /* SYSTEM */
 led system_led(25);
-
-/* DISPLAY */
-i2c_init(I2C_PORT, 100000);
-
 
 using namespace std;
 
