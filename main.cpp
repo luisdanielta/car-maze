@@ -9,6 +9,7 @@
 #include "Servo.h"
 #include "GFX.h"
 #include <stdio.h>
+#include "pico/multicore.h"
 
 /* MOTORS */
 uint8_t pins_left[2] = {14, 13};
@@ -38,12 +39,17 @@ led system_led(25);
 /* SERVO */
 Servo servo;
 
+/* DISPLAY */
+void update_display(float, float);
+GFX oled(0x3C, size::W128xH64, i2c1); // Declare oled instance
+
 using namespace std;
 
 int main()
 {
     stdio_init_all();
-    mode_usb_debug(true);
+    // mode_usb_debug(true);
+
 
     /* HC-SR04 */
     init_hc_sr04();
@@ -69,12 +75,19 @@ int main()
     gpio_pull_up(2);                     // Pull up GPIO2
     gpio_pull_up(3);                     // Pull up GPIO3
 
-    GFX oled(0x3C, size::W128xH64, i2c1); // Declare oled instance
-
     while (true)
     {
         sl_l_state = gpio_get(SL_LEFT);
         sl_r_state = gpio_get(SL_RIGHT);
+        tmp_distance[0] = current_distance;
+        tmp_distance[1] = current_distance;
+        float speed = calculate_speed(tmp_distance[0], tmp_distance[1], 1000);
+
+        oled.clear();
+        oled.drawString(0, 0, "Speed: " + to_string(speed));
+        /*distance*/
+        oled.drawString(0, 10, "Distance: " + to_string(measure_distance()));
+        oled.display();
 
         if (!sl_l_state && !sl_r_state)
         {
@@ -97,10 +110,6 @@ int main()
             {
                 motors.right();
                 motors.forward();
-            }
-            else if (tmp_distance[0] == tmp_distance[1])
-            {
-                motors.backward();
             }
             else
             {
