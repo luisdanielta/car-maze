@@ -27,7 +27,19 @@ target_sources(main PRIVATE
 
     led.h
     led.cpp
+
+    servo.cpp
+    servo.h
+
+    SSD1306.cpp
+    SSD1306.h
+
+    GFX.cpp
+    GFX.h
+
+    font.h
 )
+
 
 # Add pico_stdlib library which aggregates commonly used features
 target_link_libraries(main pico_stdlib pico_multicore)
