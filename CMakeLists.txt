@@ -27,13 +27,18 @@ target_sources(main PRIVATE
 
     led.h
     led.cpp
+
+    font.h
+
+    ssd1306.c
+    ssd1306.h
 )
 
 # Add pico_stdlib library which aggregates commonly used features
 target_link_libraries(main pico_stdlib pico_multicore)
 
 # Add hardware pwm library
-target_link_libraries(main hardware_gpio hardware_dma hardware_timer hardware_pwm)
+target_link_libraries(main hardware_gpio hardware_i2c hardware_timer hardware_pwm)
 
 # config uart output USB
 pico_enable_stdio_usb(main 1)
