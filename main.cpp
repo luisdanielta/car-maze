@@ -52,8 +52,13 @@ int main()
     { 
         bool sl_l_state = gpio_get(SL_LEFT);
         string str_let = to_string(sl_l_state);
-        printf("%s", str_let.c_str());
-        
+        //printf("%s", str_let.c_str());
+
+        float current_distance = measure_distance();
+        printf("Distance: %.2f cm\n", current_distance);
+        printf("\n");
+        sleep_ms(500);
+
         if (!sl_l_state)
             motors.forward();
         else
