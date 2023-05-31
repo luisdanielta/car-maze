@@ -3,5 +3,12 @@
     "files.associations": {
         "clocks.h": "c",
         "fixmath.h": "c"
-    }
+    },
+    "cmake.additionalCompilerSearchDirs": [
+        "C:\\Projects\\tools\\mingw32\\bin"
+    ],
+    "cmake.configureEnvironment": {
+        "PICO_SDK_PATH": "C:\\Projects\\tools\\pico-sdk"
+    },
+    "cmake.generator": "MinGW Makefiles"
 }
