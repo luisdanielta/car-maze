@@ -22,22 +22,12 @@ target_sources(main PRIVATE
     motor.cpp
     motor.h
 
-    core.cpp
-    core.h
-
     led.h
     led.cpp
 
     servo.cpp
     servo.h
 
-    SSD1306.cpp
-    SSD1306.h
-
-    GFX.cpp
-    GFX.h
-
-    font.h
 )
 
 

@@ -1,11 +1,8 @@
 {
     "cmake.configureOnOpen": false,
-    "files.associations": {
-        "clocks.h": "c",
-        "fixmath.h": "c"
-    },
     "cmake.additionalCompilerSearchDirs": [
-        "C:\\Projects\\tools\\mingw32\\bin"
+        "C:\\Projects\\tools\\mingw32\\bin",
+        "C:\\Program Files (x86)\\GNU Arm Embedded Toolchain\\10 2021.10\\bin"
     ],
     "cmake.configureEnvironment": {
         "PICO_SDK_PATH": "C:\\Projects\\tools\\pico-sdk"

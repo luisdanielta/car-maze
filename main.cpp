@@ -1,18 +1,15 @@
 #include <stdint.h>
 #include "pico/stdlib.h"
-#include "core.h"
 #include "motor.h"
 #include "control.h"
 #include <string>
 #include "led.h"
 #include "hardware/i2c.h"
 #include "Servo.h"
-#include "GFX.h"
 #include <stdio.h>
-#include "pico/multicore.h"
 
 /* MOTORS */
-uint8_t pins_left[2] = {14, 13};
+uint8_t pins_left[2] = {13, 14};
 uint8_t pins_right[2] = {11, 12};
 
 motor motor_left(pins_left);
@@ -39,17 +36,11 @@ led system_led(25);
 /* SERVO */
 Servo servo;
 
-/* DISPLAY */
-void update_display(float, float);
-GFX oled(0x3C, size::W128xH64, i2c1); // Declare oled instance
-
 using namespace std;
 
 int main()
 {
     stdio_init_all();
-    // mode_usb_debug(true);
-
 
     /* HC-SR04 */
     init_hc_sr04();
@@ -67,65 +58,33 @@ int main()
 
     /* SERVO */
     servo.attach(1);
-
-    /* DISPLAY */
-    i2c_init(i2c1, 400000);              // Initialize I2C on i2c1 port with 400kHz
-    gpio_set_function(2, GPIO_FUNC_I2C); // Use GPIO2 as I2C
-    gpio_set_function(3, GPIO_FUNC_I2C); // Use GPIO3 as I2C
-    gpio_pull_up(2);                     // Pull up GPIO2
-    gpio_pull_up(3);                     // Pull up GPIO3
+    servo.write(90);
 
     while (true)
     {
+        /*
+             0 = true
+             1 = false
+        */
+
         sl_l_state = gpio_get(SL_LEFT);
         sl_r_state = gpio_get(SL_RIGHT);
-        tmp_distance[0] = current_distance;
-        tmp_distance[1] = current_distance;
-        float speed = calculate_speed(tmp_distance[0], tmp_distance[1], 1000);
 
-        oled.clear();
-        oled.drawString(0, 0, "Speed: " + to_string(speed));
-        /*distance*/
-        oled.drawString(0, 10, "Distance: " + to_string(measure_distance()));
-        oled.display();
-
-        if (!sl_l_state && !sl_r_state)
+        if (sl_l_state == 0 && sl_r_state == 0)
         {
             motors.forward();
         }
-        else if (sl_l_state && sl_r_state)
+        else if (sl_l_state == 1 && sl_r_state == 1)
         {
             motors.stop();
-            servo.write(0);
-            current_distance = measure_distance();
-            tmp_distance[0] = current_distance;
-            sleep_ms(1000);
-
-            servo.write(180);
-            current_distance = measure_distance();
-            tmp_distance[1] = current_distance;
-            sleep_ms(1000);
-
-            if (tmp_distance[0] > tmp_distance[1])
-            {
-                motors.right();
-                motors.forward();
-            }
-            else
-            {
-                motors.left();
-                motors.forward();
-            }
+        } else if (sl_l_state == 0 && sl_r_state == 1) {
+            motors.right();
+            sleep_ms(300);
         }
-        else if (sl_l_state && !sl_r_state)
+        else if (sl_l_state == 1 && sl_r_state == 0)
         {
             motors.left();
-            motors.forward();
-        }
-        else if (!sl_l_state && sl_r_state)
-        {
-            motors.right();
-            motors.forward();
+            sleep_ms(300);
         }
     }
     return 0;
