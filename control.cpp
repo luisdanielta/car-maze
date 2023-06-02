@@ -26,11 +26,10 @@ control::~control() {}
 int control::speed(uint8_t *speed)
 {
     size_t i;
-    for (i = 0; i < 5; i++)
+    for (i = 0; i < 3; i++)
     {
         pwm_set_gpio_level(this->en[0], speed[i]);
         pwm_set_gpio_level(this->en[1], speed[i]);
-        sleep_ms(50);
     }
     return i;
 }
@@ -46,14 +45,14 @@ void control::forward()
     if (FORWARD) // check if the motor is already
     {
         int status = speed(HIGH);
-        if (status == 5)
+        if (status == 3)
         {
             FORWARD = false; // disable accelerate
             STOP = true;     // enable stop
         }
     }
     else
-        pwm_set_gpio_level(this->en[0], 255); // set speed to max
+        pwm_set_gpio_level(this->en[0], 128); // set speed to max
 }
 
 void control::stop()
@@ -61,7 +60,7 @@ void control::stop()
     if (STOP)
     {
         int status = speed(LOW); // decelerate
-        if (status == 5)
+        if (status == 3)
         {
             FORWARD = true; // enable accelerate
             STOP = false;   // disable stop
@@ -72,7 +71,7 @@ void control::stop()
 void control::left()
 {
     gpio_put(motor_left.pins[0], 0);
-    gpio_put(motor_left.pins[1], 1);
+    gpio_put(motor_left.pins[1], 0);
 
     gpio_put(motor_right.pins[0], 1);
     gpio_put(motor_right.pins[1], 0);
@@ -80,14 +79,14 @@ void control::left()
     if (FORWARD) // check if the motor is already
     {
         int status = speed(HIGH);
-        if (status == 5)
+        if (status == 3)
         {
             FORWARD = false; // disable accelerate
             STOP = true;     // enable stop
         }
     }
     else
-        pwm_set_gpio_level(this->en[0], 255); // set speed to max
+        pwm_set_gpio_level(this->en[0], 128); // set speed to max
 }
 
 void control::right()
@@ -96,17 +95,17 @@ void control::right()
     gpio_put(motor_left.pins[1], 0);
 
     gpio_put(motor_right.pins[0], 0);
-    gpio_put(motor_right.pins[1], 1);
+    gpio_put(motor_right.pins[1], 0);
 
     if (FORWARD) // check if the motor is already
     {
         int status = speed(HIGH);
-        if (status == 5)
+        if (status == 3)
         {
             FORWARD = false; // disable accelerate
             STOP = true;     // enable stop
         }
     }
     else
-        pwm_set_gpio_level(this->en[0], 255); // set speed to max
+        pwm_set_gpio_level(this->en[0], 128); // set speed to max
 }

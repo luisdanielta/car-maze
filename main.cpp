@@ -7,6 +7,13 @@
 #include "hardware/i2c.h"
 #include "Servo.h"
 #include <stdio.h>
+#include "pico/bootrom.h"
+#include "pico/multicore.h"
+
+void reload_program();
+
+#define RELOAD_PIN 16
+bool reload_pin_previous = true;
 
 /* MOTORS */
 uint8_t pins_left[2] = {13, 14};
@@ -46,6 +53,8 @@ int main()
     init_hc_sr04();
     float tmp_distance[2];
     float current_distance;
+    float distance_left;  // servo.write(180)
+    float distance_right; // servo.write(0)
 
     /* SENSORS OF LIGHT */
     void init_sl_sensors();
@@ -66,7 +75,7 @@ int main()
              0 = true
              1 = false
         */
-
+        reload_program();
         sl_l_state = gpio_get(SL_LEFT);
         sl_r_state = gpio_get(SL_RIGHT);
 
@@ -77,14 +86,49 @@ int main()
         else if (sl_l_state == 1 && sl_r_state == 1)
         {
             motors.stop();
-        } else if (sl_l_state == 0 && sl_r_state == 1) {
-            motors.right();
-            sleep_ms(300);
+            distance_left = 0;
+            distance_right = 0;
+
+            servo.write(0);
+            distance_left = measure_distance();
+            printf("distance left: %f\n", distance_left);
+            sleep_ms(1500);
+
+            servo.write(180);
+            distance_right = measure_distance();
+            printf("distance right: %f\n", distance_right);
+            sleep_ms(1500);
+
+            servo.write(90);
+
+            /* move car left or right */ // right
+            if (distance_left > distance_right)
+            {
+                motors.right();
+                sleep_ms(500);
+            }
+
+            /* move car left or right */ // left
+            else if (distance_left < distance_right)
+            {
+                motors.left();
+                sleep_ms(500);
+            }
         }
+
+        /* move car left or right */ // right
+        if (sl_l_state == 0 && sl_r_state == 1)
+        {
+            sleep_ms(400);
+            motors.right();
+            sleep_ms(500);
+        }
+        /* move car left or right */ // left
         else if (sl_l_state == 1 && sl_r_state == 0)
         {
+            sleep_ms(400);
             motors.left();
-            sleep_ms(300);
+            sleep_ms(500);
         }
     }
     return 0;
@@ -111,7 +155,7 @@ void init_hc_sr04()
     gpio_set_pulls(ECHO_PIN, true, false);
 }
 
-float measure_distance()
+float  measure_distance()
 {
     gpio_put(TRIG_PIN, 1);
     sleep_us(10);
@@ -136,4 +180,25 @@ float calculate_speed(float d_uno, float d_two, uint32_t time_interval)
 {
     float speed = (d_two - d_uno) / (time_interval / 1000000.0);
     return speed;
+}
+
+void reload_program()
+{
+
+    gpio_init(RELOAD_PIN);
+    gpio_set_dir(RELOAD_PIN, GPIO_IN);
+    gpio_pull_up(RELOAD_PIN);
+
+    /*
+        The reload_program function is designed to check
+        the state of a specific pin (RELOAD_PIN) and initiate
+        a USB boot mode if a certain condition is met.
+    */
+
+    bool reload_pin_current = !gpio_get(RELOAD_PIN);
+    if (reload_pin_current && !reload_pin_previous)
+        reset_usb_boot(0, 0);
+    reload_pin_previous = reload_pin_current;
+
+    multicore_reset_core1();
 }

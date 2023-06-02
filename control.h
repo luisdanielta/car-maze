@@ -13,8 +13,8 @@ private:
     uint8_t en[2];
     bool FORWARD = true;
     bool STOP = false;
-    uint8_t HIGH[5] = {0, 64, 128, 192, 255};
-    uint8_t LOW[5] = {255, 192, 128, 64, 0};
+    uint8_t HIGH[3] = {0, 64, 128};
+    uint8_t LOW[3] = {128, 64, 0};
     int speed(uint8_t *);
 
 public:
